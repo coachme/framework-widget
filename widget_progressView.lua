@@ -12,7 +12,7 @@
 --      may be used to endorse or promote products derived from this software
 --      without specific prior written permission.
 --    * Redistributions in any form whatsoever must retain the following
---      acknowledgment visually in the program (e.g. the credits of the program): 
+--      acknowledgment visually in the program (e.g. the credits of the program):
 --      'This product includes software developed by Corona Labs Inc. (http://www.coronalabs.com).'
 --
 -- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -26,7 +26,7 @@
 -- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-local M = 
+local M =
 {
 	_options = {},
 	_widgetName = "widget.newProgressView",
@@ -34,7 +34,7 @@ local M =
 
 
 -- Require needed widget files
-local _widget = require( "widget" )
+local _widget = require( "scripts.libs.third_party.widget.widget" )
 
 local isGraphicsV1 = ( 1 == display.getDefault( "graphicsCompatibility" ) )
 
@@ -46,12 +46,12 @@ local mFloor = math.floor
 local function initWithImage( progressView, options )
 	-- Create a local reference to our options table
 	local opt = options
-	
+
 	local view = progressView
-	
+
 	-- Forward references
 	local imageSheet, view, viewBorderLeft, viewBorderMiddle, viewBorderRight, viewFillLeft, viewFillMiddle, viewFillRight
-	
+
 	-- Create the imageSheet
 	if opt.sheet then
 		imageSheet = opt.sheet
@@ -59,39 +59,39 @@ local function initWithImage( progressView, options )
 		local themeData = require( opt.themeData )
 		imageSheet = graphics.newImageSheet( opt.themeSheetFile, themeData:getSheet() )
 	end
-	
+
 	-- The view is the segmentedControl (group)
 	view = progressView
-	
+
 	-- Create the view
 	local viewOuterLeft = display.newImageRect( progressView, imageSheet, opt.fillOuterLeftFrame, opt.fillOuterWidth, opt.fillOuterHeight )
 	local viewOuterMiddle = display.newImageRect( progressView, imageSheet, opt.fillOuterMiddleFrame, opt.fillOuterWidth, opt.fillOuterHeight )
 	local viewOuterRight = display.newImageRect( progressView, imageSheet, opt.fillOuterRightFrame, opt.fillOuterWidth, opt.fillOuterHeight )
-	
+
 	-- The left rounded edge of the progress fill
 	viewFillLeft = display.newImageRect( progressView, imageSheet, opt.fillInnerLeftFrame, opt.fillWidth, opt.fillHeight )
-	
+
 	-- The middle progress fill image
 	viewFillMiddle = display.newImageRect( progressView, imageSheet, opt.fillInnerMiddleFrame, opt.fillWidth, opt.fillHeight )
-	
+
 	-- The right rounded edge of the progress fill
 	viewFillRight = display.newImageRect( progressView, imageSheet, opt.fillInnerRightFrame, opt.fillWidth, opt.fillHeight )
-	
+
 	-- Properties
 	local rangeFactor = 100
 	local availableMoveSpace = ( opt.width - ( opt.fillOuterWidth * 2) ) - ( opt.fillXOffset * 2 )
 	local moveFactor = availableMoveSpace / rangeFactor
 	local currentPercent = ( availableMoveSpace / rangeFactor ) * ( rangeFactor )
-	
+
 	-------------------------------------------------------
 	-- Assign properties to the view
 	-------------------------------------------------------
-	
+
 	-- Properties
 	view._isAnimated = opt.isAnimated
 	view._currentProgress = 0.00
 	view._currentPercent = currentPercent
-	
+
 	-- Set the left fills position
 	viewFillLeft.x = progressView.x + ( viewFillLeft.contentWidth * 0.5 ) + opt.fillXOffset
 	viewFillLeft.y = progressView.y + ( viewFillLeft.contentHeight * 0.5 ) + opt.fillYOffset
@@ -104,61 +104,61 @@ local function initWithImage( progressView, options )
 	viewFillMiddle.width = 1
 	viewFillMiddle.x = viewFillLeft.x + viewFillLeft.contentWidth * 0.5 + viewFillMiddle.width * 0.5
 	viewFillMiddle.y = progressView.y + ( viewFillMiddle.contentHeight * 0.5 ) + opt.fillYOffset
-	
+
 	-- OUTER MIDDLE
 	viewOuterMiddle.width =  availableMoveSpace
 	viewOuterMiddle.x = viewOuterLeft.x + ( ( viewOuterLeft.contentWidth * 0.5 ) + ( viewOuterMiddle.width * 0.5 ) )
 	viewOuterMiddle.y = progressView.y + ( viewOuterMiddle.contentHeight * 0.5 )
-	
+
 	-- Set the right fills position
 	viewFillRight.x = viewFillLeft.x + viewFillMiddle.width + viewFillRight.contentWidth
 	viewFillRight.y = progressView.y + ( viewFillRight.contentHeight * 0.5 ) + opt.fillYOffset
-	
+
 	-- OUTER RIGHT
 	viewOuterRight.x = viewOuterMiddle.x + ( viewOuterMiddle.contentWidth * 0.5 ) + ( viewOuterRight.contentWidth * 0.5 )
 	viewOuterRight.y = progressView.y + ( viewOuterRight.contentHeight * 0.5 )
-	
+
 	-------------------------------------------------------
 	-- Assign objects to the view
 	-------------------------------------------------------
-	
+
 	-- Outer frame
 	view._outerLeft = viewOuterLeft
 	view._outerMiddle = viewOuterMiddle
 	view._outerRight = viewOuterRight
-	
+
 	-- Inner fill
 	view._fillLeft = viewFillLeft
 	view._fillMiddle = viewFillMiddle
 	view._fillRight = viewFillRight
-	
+
 	-- Offsets
 	view._fillXOffset = opt.fillXOffset
 	view._fillYOffset = opt.fillYOffset
 	view._fillOuterWidth = opt.fillOuterWidth
-	
+
 	-------------------------------------------------------
 	-- Assign properties/objects to the progressView
 	-------------------------------------------------------
-	
+
 	-- Assign objects to the progressView
 	progressView._imageSheet = imageSheet
 	progressView._view = view
-	
+
 	----------------------------------------------------------
-	--	PUBLIC METHODS	
+	--	PUBLIC METHODS
 	----------------------------------------------------------
 
 	-- Function to set the progressView's current progress (ie fill)
 	function progressView:setProgress( progress )
 		-- Create a local reference to the view
 		local view = self._view
-		
+
 		-- If the progress is more than 100% then clamp the value
 		if progress > 1.0 then
 			progress = 1.0
 		end
-		
+
 		-- Only execute this if the progressView's view hasn't been removed
 		if "table" == type( view ) then
 			-- Reset the bar if requested
@@ -184,7 +184,7 @@ local function initWithImage( progressView, options )
 				view._fillMiddle.isVisible = true
 				view._fillRight.isVisible = true
 			end
-			
+
 			-- If the current percent is 0 or less, reset the bar
 			if view._currentPercent <= 0 then
 				view._fillLeft.isVisible = false
@@ -208,41 +208,41 @@ local function initWithImage( progressView, options )
 				view._fillRight.x = mFloor( view._fillLeft.x + view._currentPercent + view._fillRight.contentWidth )
 			end
 		end
-		
+
  	end
 
 	-- Function to get the progressView's current progress
 	function progressView:getProgress()
 		return self._currentProgress
 	end
-	
+
 	----------------------------------------------------------
-	--	PRIVATE METHODS	
+	--	PRIVATE METHODS
 	----------------------------------------------------------
-	
+
 	-- Finalize function for the progressView
 	function progressView:_finalize()
 		self._view._fillMiddle = nil
 		self._view._fillLeft = nil
 		self._view._fillRight = nil
 		self._view = nil
-		
+
 		-- Set the ImageSheet to nil
 		self._imageSheet = nil
 	end
 
 	-- Resizes a existing progressView
 	function progressView:resizeView( newWidth )
-	
+
 		local view = self
-	
+
 		-- OUTER MIDDLE
 		view._outerMiddle.width = ( newWidth - ( view._fillOuterWidth * 2 ) )
 		view._outerMiddle.x = view._outerLeft.x + ( ( view._outerLeft.contentWidth * 0.5 ) + ( view._outerMiddle.width * 0.5 ) )
-	
+
 		-- Set the right fills position
 		view._fillRight.x = view._fillLeft.x + view._fillMiddle.width + ( view._fillRight.contentWidth * 0.5 )
-	
+
 		-- OUTER RIGHT
 		view._outerRight.x = view._outerMiddle.x + ( view._outerMiddle.contentWidth * 0.5 ) + ( view._outerRight.contentWidth * 0.5 )
 
@@ -253,24 +253,24 @@ local function initWithImage( progressView, options )
 		currentPercent = ( availableMoveSpace / rangeFactor ) * ( rangeFactor )
 
 	end
-			
+
 	return progressView
 end
 
 -- Function to create a new progressView object ( widget.newProgressView )
-function M.new( options, theme )	
+function M.new( options, theme )
 	local customOptions = options or {}
 	local themeOptions = theme or {}
-	
+
 	-- Create a local reference to our options table
 	local opt = M._options
-	
+
 	-- Check if the requirements for creating a widget has been met (throws an error if not)
 	_widget._checkRequirements( customOptions, themeOptions, M._widgetName )
-	
+
 	-------------------------------------------------------
 	-- Properties
-	-------------------------------------------------------	
+	-------------------------------------------------------
 	-- Positioning & properties
 	opt.left = customOptions.left or 0
 	opt.top = customOptions.top or 0
@@ -293,30 +293,30 @@ function M.new( options, theme )
 		opt.fillYOffset = themeOptions.fillYOffset or 0
 	end
 	opt.padding = customOptions.padding or themeOptions.fillOuterWidth or 0
-	
+
 	-- Frames & Images
 	opt.sheet = customOptions.sheet
 	opt.themeSheetFile = themeOptions.sheet
 	opt.themeData = themeOptions.data
-	
+
 	opt.fillWidth = customOptions.fillWidth or themeOptions.fillWidth or error( "ERROR: " .. M._widgetName .. ": fillWidth expected, got nil", 3 )
 	opt.fillHeight = customOptions.fillHeight or themeOptions.fillHeight or error( "ERROR: " .. M._widgetName .. ": fillHeight expected, got nil", 3 )
-	
+
 	opt.fillOuterWidth = customOptions.fillOuterWidth or themeOptions.fillOuterWidth or error( "ERROR: " .. M._widgetName .. ": outerWidth expected, got nil", 3 )
 	opt.fillOuterHeight = customOptions.fillOuterHeight or themeOptions.fillOuterHeight or error( "ERROR: " .. M._widgetName .. ": outerHeight expected, got nil", 3 )
-	
+
 	opt.fillOuterLeftFrame = customOptions.fillOuterLeftFrame or _widget._getFrameIndex( themeOptions, themeOptions.fillOuterLeftFrame )
 	opt.fillOuterMiddleFrame = customOptions.fillOuterMiddleFrame or _widget._getFrameIndex( themeOptions, themeOptions.fillOuterMiddleFrame )
 	opt.fillOuterRightFrame = customOptions.fillOuterRightFrame or _widget._getFrameIndex( themeOptions, themeOptions.fillOuterRightFrame )
-	
+
 	opt.fillInnerLeftFrame = customOptions.fillInnerLeftFrame or _widget._getFrameIndex( themeOptions, themeOptions.fillInnerLeftFrame )
 	opt.fillInnerMiddleFrame = customOptions.fillInnerMiddleFrame or _widget._getFrameIndex( themeOptions, themeOptions.fillInnerMiddleFrame )
 	opt.fillInnerRightFrame = customOptions.fillInnerRightFrame or _widget._getFrameIndex( themeOptions, themeOptions.fillInnerRightFrame )
-	
+
 	-------------------------------------------------------
 	-- Create the progressView
 	-------------------------------------------------------
-		
+
 	-- Create the progressView object
 	local progressView = _widget._new
 	{
@@ -325,19 +325,19 @@ function M.new( options, theme )
 		id = opt.id or "widget_progressView",
 		baseDir = opt.baseDir,
 	}
-		
+
 	-- Create the progressView
 	initWithImage( progressView, opt )
-	
+
 	-- Set the progressView's position ( set the reference point to center, just to be sure )
-	
+
 	if ( isGraphicsV1 ) then
 		progressView:setReferencePoint( display.CenterReferencePoint )
 	end
-	
+
 	local x, y = _widget._calculatePosition( progressView, opt )
-	progressView.x, progressView.y = x, y	
-	
+	progressView.x, progressView.y = x, y
+
 	return progressView
 end
 

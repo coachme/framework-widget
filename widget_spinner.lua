@@ -12,7 +12,7 @@
 --      may be used to endorse or promote products derived from this software
 --      without specific prior written permission.
 --    * Redistributions in any form whatsoever must retain the following
---      acknowledgment visually in the program (e.g. the credits of the program): 
+--      acknowledgment visually in the program (e.g. the credits of the program):
 --      'This product includes software developed by Corona Labs Inc. (http://www.coronalabs.com).'
 --
 -- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -26,7 +26,7 @@
 -- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-local M = 
+local M =
 {
 	_options = {},
 	_widgetName = "widget.newSpinner",
@@ -34,7 +34,7 @@ local M =
 
 
 -- Require needed widget files
-local _widget = require( "widget" )
+local _widget = require( "scripts.libs.third_party.widget.widget" )
 
 local isGraphicsV1 = ( 1 == display.getDefault( "graphicsCompatibility" ) )
 
@@ -42,10 +42,10 @@ local isGraphicsV1 = ( 1 == display.getDefault( "graphicsCompatibility" ) )
 local function initWithImage( spinner, options )
 	-- Create a local reference to our options table
 	local opt = options
-		
+
 	-- Forward references
 	local imageSheet, view
-	
+
 	-- Create the imageSheet
 	if opt.sheet then
 		imageSheet = opt.sheet
@@ -53,39 +53,39 @@ local function initWithImage( spinner, options )
 		local themeData = require( opt.themeData )
 		imageSheet = graphics.newImageSheet( opt.themeSheetFile, themeData:getSheet() )
 	end
-	
+
 	-- Create the view
 	view = display.newImageRect( spinner, imageSheet, opt.startFrame, opt.width, opt.height )
 	view.x = spinner.x + ( view.contentWidth * 0.5 )
 	view.y = spinner.y + ( view.contentHeight * 0.5 )
-	
+
 	-------------------------------------------------------
 	-- Assign properties to the view
 	-------------------------------------------------------
-	
+
 	-- We need to assign these properties to the object
 	view._deltaAngle = opt.deltaAngle
 	view._increments = opt.increments
-	
+
 	-------------------------------------------------------
 	-- Assign properties/objects to the spinner
 	-------------------------------------------------------
-	
+
 	-- Assign objects to the spinner
 	spinner._imageSheet = imageSheet
 	spinner._view = view
-	
+
 	----------------------------------------------------------
-	--	PUBLIC METHODS	
+	--	PUBLIC METHODS
 	----------------------------------------------------------
-			
+
 	-- Function to start the spinner's rotation
 	function spinner:start()
 		-- The spinner isn't a sprite > Start or resume it's timer
 		local function rotateSpinner()
 			self._view:rotate( self._view._deltaAngle )
 		end
-			
+
 		-- If the timer doesn't exist > Create it
 		if not self._view._timer then
 			self._view._timer = timer.performWithDelay( self._view._increments, rotateSpinner, 0 )
@@ -94,7 +94,7 @@ local function initWithImage( spinner, options )
 			timer.resume( self._view._timer )
 		end
 	end
-	
+
 	-- Function to pause the spinner's rotation
 	function spinner:stop()
 		-- Pause the spinner's timer
@@ -102,22 +102,22 @@ local function initWithImage( spinner, options )
 			timer.pause( self._view._timer )
 		end
 	end
-	
+
 	----------------------------------------------------------
-	--	PRIVATE METHODS	
+	--	PRIVATE METHODS
 	----------------------------------------------------------
-	
+
 	-- Finalize function for the spinner
 	function spinner:_finalize()
 		if self._view._timer then
 			timer.cancel( self._view._timer )
 			self._view._timer = nil
 		end
-		
+
 		-- Set spinners ImageSheet to nil
 		self._imageSheet = nil
 	end
-			
+
 	return spinner
 end
 
@@ -126,19 +126,19 @@ end
 local function initWithSprite( spinner, options )
 	-- Create a local reference to our options table
 	local opt = options
-	
+
 	-- Animation options
-	local sheetOptions = 
-	{ 
-		name = "default", 
-		start = opt.startFrame, 
+	local sheetOptions =
+	{
+		name = "default",
+		start = opt.startFrame,
 		count = opt.frameCount,
 		time = opt.animTime,
 	}
-	
+
 	-- Forward references
 	local imageSheet, view
-	
+
 	-- Create the imageSheet
 	if opt.sheet then
 		imageSheet = opt.sheet
@@ -146,62 +146,62 @@ local function initWithSprite( spinner, options )
 		local themeData = require( opt.themeData )
 		imageSheet = graphics.newImageSheet( opt.themeSheetFile, themeData:getSheet() )
 	end
-	
+
 	-- Create the view
 	view = display.newSprite( spinner, imageSheet, sheetOptions )
 	view:setSequence( "default" )
-	
+
 	-- Positioning
 	view.x = spinner.x + ( view.contentWidth * 0.5 )
 	view.y = spinner.y + ( view.contentHeight * 0.5 )
-	
+
 	-------------------------------------------------------
 	-- Assign properties/objects to the spinner
 	-------------------------------------------------------
-	
+
 	-- Assign objects to the spinner
 	spinner._imageSheet = imageSheet
 	spinner._view = view
-	
+
 	----------------------------------------------------------
-	--	PUBLIC METHODS	
+	--	PUBLIC METHODS
 	----------------------------------------------------------
-	
+
 	-- Function to start the spinner's animation
 	function spinner:start()
 		self._view:play()
 	end
-	
+
 	-- Function to pause the spinner's animation
 	function spinner:stop()
 		self._view:pause()
 	end
-	
+
 	----------------------------------------------------------
-	--	PRIVATE METHODS	
+	--	PRIVATE METHODS
 	----------------------------------------------------------
-	
+
 	-- Finalize function
 	function spinner:_finalize()
 		-- Set the ImageSheet to nil
 		self._imageSheet = nil
 	end
-		
+
 	return spinner
 end
 
 
 -- Function to create a new Spinner object ( widget.newSpinner )
-function M.new( options, theme )	
+function M.new( options, theme )
 	local customOptions = options or {}
 	local themeOptions = theme or {}
-	
+
 	-- Create a local reference to our options table
 	local opt = M._options
-	
+
 	-- Check if the requirements for creating a widget has been met (throws an error if not)
 	_widget._checkRequirements( customOptions, themeOptions, M._widgetName )
-	
+
 	-------------------------------------------------------
 	-- Properties
 	-------------------------------------------------------
@@ -222,19 +222,19 @@ function M.new( options, theme )
 	opt.animTime = customOptions.time or themeOptions.time or 1000
 	opt.deltaAngle = customOptions.deltaAngle or themeOptions.deltaAngle or 1
 	opt.increments = customOptions.incrementEvery or themeOptions.incrementEvery or 1
-		
+
 	-- Frames & Images
 	opt.sheet = customOptions.sheet
 	opt.themeSheetFile = themeOptions.sheet
 	opt.themeData = themeOptions.data
-	
+
 	opt.startFrame = customOptions.startFrame or _widget._getFrameIndex( themeOptions, themeOptions.startFrame )
 	opt.frameCount = customOptions.count or themeOptions.count or 0
 
 	-------------------------------------------------------
 	-- Create the spinner
 	-------------------------------------------------------
-		
+
 	-- Create the spinner object
 	local spinner = _widget._new
 	{
@@ -243,7 +243,7 @@ function M.new( options, theme )
 		id = opt.id or "widget_spinner",
 		baseDir = opt.baseDir,
 	}
-		
+
 	-- Is the spinner animated?
 	local spinnerIsAnimated = opt.frameCount > 1
 
@@ -253,16 +253,16 @@ function M.new( options, theme )
 	else
 		initWithImage( spinner, opt )
 	end
-	
+
 	-- Set the spinner's position ( set the reference point to center, just to be sure )
-	
+
 	if ( isGraphicsV1 ) then
 		spinner:setReferencePoint( display.CenterReferencePoint )
 	end
-	
+
 	local x, y = _widget._calculatePosition( spinner, opt )
 	spinner.x, spinner.y = x, y
-	
+
 	return spinner
 end
 

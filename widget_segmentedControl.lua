@@ -12,7 +12,7 @@
 --      may be used to endorse or promote products derived from this software
 --      without specific prior written permission.
 --    * Redistributions in any form whatsoever must retain the following
---      acknowledgment visually in the program (e.g. the credits of the program): 
+--      acknowledgment visually in the program (e.g. the credits of the program):
 --      'This product includes software developed by Corona Labs Inc. (http://www.coronalabs.com).'
 --
 -- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -26,7 +26,7 @@
 -- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-local M = 
+local M =
 {
 	_options = {},
 	_widgetName = "widget.newSegmentedControl",
@@ -34,7 +34,7 @@ local M =
 
 
 -- Require needed widget files
-local _widget = require( "widget" )
+local _widget = require( "scripts.libs.third_party.widget.widget" )
 
 local isGraphicsV1 = ( 1 == display.getDefault( "graphicsCompatibility" ) )
 local isByteColorRange = display.getDefault( "isByteColorRange" )
@@ -54,10 +54,10 @@ end
 local function initWithImage( segmentedControl, options )
 	-- Create a local reference to our options table
 	local opt = options
-	
+
 	-- Forward references
 	local imageSheet, view, segmentLabels, segmentDividers
-	
+
 	-- Create the imageSheet
 	if opt.sheet then
 		imageSheet = opt.sheet
@@ -65,22 +65,22 @@ local function initWithImage( segmentedControl, options )
 		local themeData = require( opt.themeData )
 		imageSheet = graphics.newImageSheet( opt.themeSheetFile, themeData:getSheet() )
 	end
-	
+
 	-- The view is the segmentedControl (group)
 	view = segmentedControl
 	view._segmentWidth = M.segmentWidth
 	view._labelColor = opt.labelColor
-	
+
 	-- Create the sequenceData table
-	local leftSegmentOptions = 
-	{ 
+	local leftSegmentOptions =
+	{
 		{
 			name = "leftSegmentOff",
 			start = opt.leftSegmentFrame,
 			count = 1,
 			time = 1,
 		},
-		
+
 		{
 			name = "leftSegmentOn",
 			start = opt.leftSegmentSelectedFrame,
@@ -88,16 +88,16 @@ local function initWithImage( segmentedControl, options )
 			time = 1,
 		},
 	}
-	
-	local rightSegmentOptions = 
-	{ 
+
+	local rightSegmentOptions =
+	{
 		{
 			name = "rightSegmentOff",
 			start = opt.rightSegmentFrame,
 			count = 1,
 			time = 1,
 		},
-		
+
 		{
 			name = "rightSegmentOn",
 			start = opt.rightSegmentSelectedFrame,
@@ -105,16 +105,16 @@ local function initWithImage( segmentedControl, options )
 			time = 1,
 		},
 	}
-	
-	local middleSegmentOptions = 
-	{ 
+
+	local middleSegmentOptions =
+	{
 		{
 			name = "middleSegmentOff",
 			start = opt.middleSegmentFrame,
 			count = 1,
 			time = 1,
 		},
-		
+
 		{
 			name = "middleSegmentOn",
 			start = opt.middleSegmentSelectedFrame,
@@ -122,16 +122,16 @@ local function initWithImage( segmentedControl, options )
 			time = 1,
 		},
 	}
-	
-	local dividerSegmentOptions = 
-	{ 
+
+	local dividerSegmentOptions =
+	{
 		{
 			name = "middleSegmentOff",
 			start = opt.middleSegmentFrame,
 			count = 1,
 			time = 1,
 		},
-		
+
 		{
 			name = "middleSegmentOn",
 			start = opt.middleSegmentSelectedFrame,
@@ -139,17 +139,17 @@ local function initWithImage( segmentedControl, options )
 			time = 1,
 		},
 	}
-	
+
 	-- Reference the passed in segments
 	local segments = opt.segments
-	
+
 	-- Create the view's segments
 	segmentLabels = {}
 	segmentDividers = {}
-	
+
 	local overallControlWidth = ( view._segmentWidth * #segments )
 	local segmentWidth = overallControlWidth / #segments
-	
+
 	-- The left segment edge
 	local leftSegment = display.newSprite( segmentedControl, imageSheet, leftSegmentOptions )
 	leftSegment.x = segmentedControl.x + ( opt.width * 0.5 )
@@ -159,18 +159,18 @@ local function initWithImage( segmentedControl, options )
 	-- The segment fill
 	local middleSegment = display.newSprite( segmentedControl, imageSheet, middleSegmentOptions )
 	middleSegment:setSequence( "middleSegmentOff" )
-		
+
 	middleSegment.width = ( overallControlWidth ) - ( opt.width * 2 )
 	middleSegment.x = leftSegment.x + leftSegment.contentWidth * 0.5 + ( middleSegment.width * 0.5 )
 	middleSegment.y = segmentedControl.y + ( middleSegment.contentHeight * 0.5 )
-	
+
 	-- The right segment edge
 	local rightSegment = display.newSprite( segmentedControl, imageSheet, rightSegmentOptions )
 	rightSegment:setSequence( "rightSegmentOff" )
-	rightSegment.width = opt.width	
+	rightSegment.width = opt.width
 	rightSegment.x = middleSegment.x + ( middleSegment.width * 0.5 ) + opt.width * 0.5
 	rightSegment.y = segmentedControl.y + ( rightSegment.contentHeight * 0.5 )
-	
+
 	-- Create the segment labels & dividers
 	for i = 1, #segments do
 		-- Create the labels
@@ -200,10 +200,10 @@ local function initWithImage( segmentedControl, options )
 				label:setFillColor( unpack( whiteColor ) )
 			end
 		end
-		
+
 		label.x = leftSegment.x + opt.labelXOffset + ( segmentWidth * 0.5 + segmentWidth * ( i - 1 ) ) - leftSegment.width * 0.5
 		label.y = leftSegment.y + opt.labelYOffset
-		label.segmentName = segments[i] 
+		label.segmentName = segments[i]
 		segmentLabels[i] = label
 
 		-- Create the dividers
@@ -222,21 +222,21 @@ local function initWithImage( segmentedControl, options )
 	end
 
 	-- The "over" frame
-	local segmentOver = display.newSprite( segmentedControl, imageSheet, middleSegmentOptions )	
+	local segmentOver = display.newSprite( segmentedControl, imageSheet, middleSegmentOptions )
 	segmentOver:setSequence( "middleSegmentOn" )
-	
+
 	segmentOver.width = opt.width
 	segmentOver.y = leftSegment.y
-	
+
 	-------------------------------------------------------
 	-- Assign properties to the view
 	-------------------------------------------------------
-	
+
 	-- Segment properties
 	view._segmentWidth = segmentWidth
 	view._edgeWidth = opt.width
 	view._totalSegments = #segments
-	
+
 	-- Create a reference to the segments
 	view._leftSegment = leftSegment
 	view._middleSegment = middleSegment
@@ -246,34 +246,34 @@ local function initWithImage( segmentedControl, options )
 	view._segmentDividers = segmentDividers
 	view._segmentNumber = opt.defaultSegment
 	view._onPress = opt.onPress
-	
+
 	-- Insert the segment labels into the view
 	for i = 1, #view._segmentLabels do
 		view:insert( view._segmentLabels[i] )
 	end
-	
+
 	-- Insert the segment dividers into the view
 	for i = 1, #segmentDividers do
 		view:insert( view._segmentDividers[i] )
 	end
-	
+
 	-------------------------------------------------------
 	-- Assign properties/objects to the segmentedControl
 	-------------------------------------------------------
-	
+
 	-- Assign objects to the segmentedControl
 	segmentedControl._imageSheet = imageSheet
 	segmentedControl._view = view
 	segmentedControl._onPress = opt.onPress
-	
+
 	-- Public properties
 	segmentedControl.segmentLabel = view._segmentLabels[1].text
 	segmentedControl.segmentNumber = view._segmentNumber
-		
+
 	----------------------------------------------------------
-	--	PUBLIC METHODS	
+	--	PUBLIC METHODS
 	----------------------------------------------------------
-	
+
 	-- Touch listener for our segmented control
 	function view:touch( event )
 		local phase = event.phase
@@ -286,15 +286,15 @@ local function initWithImage( segmentedControl, options )
 			-- Loop through the segments
 			for i = 1, self._totalSegments do
 				local segmentedControlXPosition = self.x - ( self.contentWidth * 0.5 )
-				-- for g2, we have to take into account the current anchorX for this position 
+				-- for g2, we have to take into account the current anchorX for this position
 				if not isGraphicsV1 then
 					local oldAnchorX = self.anchorX
 					segmentedControlXPosition = segmentedControlXPosition + ( 0.5 - oldAnchorX ) * self.contentWidth
 				end
-				
+
 				local currentSegment = i
 				local segmentWidth = self._segmentWidth
-				
+
 				-- Work out the current segments position
 
 				--local parentOffsetX = 0
@@ -305,11 +305,11 @@ local function initWithImage( segmentedControl, options )
 
 				--OLD VERSION (DID NOT WORK INSIDE SCROLLVIEW)
                 --local currentSegmentLeftEdge = segmentedControlXPosition + ( segmentWidth * currentSegment ) - segmentWidth + parentOffsetX
-                --local currentSegmentRightEdge = segmentedControlXPosition + ( segmentWidth * currentSegment ) + parentOffsetX	
-				
+                --local currentSegmentRightEdge = segmentedControlXPosition + ( segmentWidth * currentSegment ) + parentOffsetX
+
 				local currentSegmentLeftEdge = self.contentBounds.xMin + ( segmentWidth * currentSegment ) - segmentWidth
 				local currentSegmentRightEdge = self.contentBounds.xMin + ( segmentWidth * currentSegment )
-				
+
 				-- If the touch is within the segments range
 				if event.x >= currentSegmentLeftEdge and event.x <= currentSegmentRightEdge then
 					-- First segment (Near left)
@@ -322,32 +322,32 @@ local function initWithImage( segmentedControl, options )
 					else
 						self:setMiddleSegmentActive( i )
 					end
-					
-					-- Set the segment name					
+
+					-- Set the segment name
 					_segmentedControl.segmentLabel = self._segmentLabels[i].segmentName
-					
+
 					-- Set the segment number
 					_segmentedControl.segmentNumber = self._segmentNumber
-					
+
 					-- Execute onPress listener
 					if self._onPress and "function" == type( self._onPress ) then
 						self._onPress( event )
 					end
-					
+
 					break
 				end
 			end
 		end
-		
+
 		return true
 	end
-	
+
 	view:addEventListener( "touch" )
 
 	----------------------------------------------------------
-	--	PRIVATE METHODS	
+	--	PRIVATE METHODS
 	----------------------------------------------------------
-	
+
 	-- Function to set the left segment active
 	function view:setLeftSegmentActive()
 		-- Turn off the right segment
@@ -357,21 +357,21 @@ local function initWithImage( segmentedControl, options )
 		-- Set the over segment's width
 		segmentOver.width = view._segmentWidth - self._leftSegment.width - 0.5
 		-- Set the over segment's position
-		
+
 		segmentOver.x = self._leftSegment.x + self._leftSegment.width * 0.5 + segmentOver.width * 0.5
-		
+
 		if isGraphicsV1 then
 			segmentOver:setReferencePoint( display.CenterReferencePoint )
 		end
-		
+
 		-- Set the segment's name
 		self._segmentLabel = self._segmentLabels[1].text
 		self.segmentLabel = self._segmentLabel
-		
+
 		-- Set the segment number
 		self._segmentNumber = 1
 		self.segmentNumber = self._segmentNumber
-		
+
 		-- Reset the label colors
 		if _widget.isSeven() then
 			for i = 1, #view._segmentLabels do
@@ -391,7 +391,7 @@ local function initWithImage( segmentedControl, options )
 			end
 		end
 	end
-	
+
 	-- Function to set the right segment active
 	function view:setRightSegmentActive()
 		-- Turn off the left segment
@@ -402,15 +402,15 @@ local function initWithImage( segmentedControl, options )
 		segmentOver.width = view._segmentWidth - self._rightSegment.width
 		-- Set the over segment's position
 		segmentOver.x = self._rightSegment.x - self._rightSegment.width * 0.5 - segmentOver.width * 0.5
-	
+
 		-- Set the segment's name
 		self._segmentLabel = self._segmentLabels[self._totalSegments].text
 		self.segmentLabel = self._segmentLabel
-		
+
 		-- Set the segment number
 		self._segmentNumber = self._totalSegments
 		self.segmentNumber = self._segmentNumber
-		
+
 		-- Reset the label colors
 		if _widget.isSeven() then
 			for i = 1, #view._segmentLabels do
@@ -429,9 +429,9 @@ local function initWithImage( segmentedControl, options )
 				view._segmentLabels[1]:setFillColor( unpack( whiteColor ) )
 			end
 		end
-		
+
 	end
-	
+
 	-- Function to set the middle segment active
 	function view:setMiddleSegmentActive( segmentNum )
 		-- Turn off the left segment
@@ -442,15 +442,15 @@ local function initWithImage( segmentedControl, options )
 		segmentOver.width = self._segmentWidth
 		-- Set the over segment's position
 		segmentOver.x = self._segmentDividers[segmentNum - 1].x + segmentOver.width * 0.5
-		
+
 		-- Set the segment's name
 		self._segmentLabel = self._segmentLabels[segmentNum].text
 		self.segmentLabel = self._segmentLabel
-		
+
 		-- Set the segment number
 		self._segmentNumber = segmentNum
 		self.segmentNumber = self._segmentNumber
-		
+
 		-- Reset the label colors
 		if _widget.isSeven() then
 			for i = 1, #view._segmentLabels do
@@ -470,7 +470,7 @@ local function initWithImage( segmentedControl, options )
 			end
 		end
 	end
-	
+
 	-- Set the intial segment to active
 	local function setDefaultSegment( segmentNum )
 		if 1 == segmentNum then
@@ -486,42 +486,42 @@ local function initWithImage( segmentedControl, options )
 	function segmentedControl:setActiveSegment(segmentNum)
 		setDefaultSegment(segmentNum)
 	end
-	
+
 	-- Getter for the current segment
 	function segmentedControl:getActiveSegment()
 	  return self._view._segmentNumber
 	end
-	
+
 	-- Finalize function for the segmentedControl
 	function segmentedControl:_finalize()
 		self._view._segments = nil
 		self._view = nil
-		
+
 		-- Set the ImageSheet to nil
 		self._imageSheet = nil
 	end
-	
+
 	-- Set the default segment
 	setDefaultSegment( view._segmentNumber )
-	
+
 	return segmentedControl
 end
 
 
 -- Function to create a new segmentedControl object ( widget.newSegmentedControl )
-function M.new( options, theme )	
+function M.new( options, theme )
 	local customOptions = options or {}
 	local themeOptions = theme or {}
-	
+
 	-- Create a local reference to our options table
 	local opt = M._options
-	
+
 	-- Check if the requirements for creating a widget has been met (throws an error if not)
 	_widget._checkRequirements( customOptions, themeOptions, M._widgetName )
-	
+
 	-------------------------------------------------------
 	-- Properties
-	-------------------------------------------------------	
+	-------------------------------------------------------
 	-- Positioning & properties
 	opt.left = customOptions.left or 0
 	opt.top = customOptions.top or 0
@@ -531,7 +531,7 @@ function M.new( options, theme )
 		opt.left = 0
 		opt.top = 0
 	end
-	
+
 	opt.id = customOptions.id
 	opt.baseDir = customOptions.baseDir or system.ResourceDirectory
 	opt.segments = customOptions.segments or { "One", "Two" }
@@ -546,16 +546,16 @@ function M.new( options, theme )
 		opt.labelFont = customOptions.labelFont or "HelveticaNeue"
 		opt.labelSize = customOptions.labelSize or 13
 	end
-	
+
 	opt.labelXOffset = customOptions.labelXOffset or themeOptions.labelXOffset or 0
 	opt.labelYOffset = customOptions.labelYOffset or themeOptions.labelYOffset or 0
 	opt.onPress = customOptions.onPress
-	
+
 	-- Frames & Images
 	opt.sheet = customOptions.sheet
 	opt.themeSheetFile = themeOptions.sheet
 	opt.themeData = themeOptions.data
-	
+
 	if ( customOptions.segmentFrameWidth or themeOptions.segmentFrameWidth ) then
 		opt.width = customOptions.segmentFrameWidth or themeOptions.segmentFrameWidth
 	else
@@ -586,11 +586,11 @@ function M.new( options, theme )
 		opt.dividerFrameWidth = themeOptions.dividerFrameWidth
 		opt.dividerFrameHeight = themeOptions.dividerFrameHeight
 	end
-	
+
 	-------------------------------------------------------
 	-- Create the segmentedControl
 	-------------------------------------------------------
-		
+
 	-- Create the segmentedControl object
 	local segmentedControl = _widget._new
 	{
@@ -599,18 +599,18 @@ function M.new( options, theme )
 		id = opt.id or "widget_segmentedControl",
 		baseDir = opt.baseDir,
 	}
-		
+
 	-- Create the segmentedControl
 	initWithImage( segmentedControl, opt )
-	
+
 	-- Set the segmentedControl's position ( set the reference point to center, just to be sure )
 	if ( isGraphicsV1 ) then
 		segmentedControl:setReferencePoint( display.CenterReferencePoint )
 	end
-	
+
 	local x, y = _widget._calculatePosition( segmentedControl, opt )
-	segmentedControl.x, segmentedControl.y = x, y	
-	
+	segmentedControl.x, segmentedControl.y = x, y
+
 	return segmentedControl
 end
 

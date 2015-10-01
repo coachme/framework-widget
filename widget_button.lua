@@ -34,7 +34,7 @@ local M =
 
 
 -- Require needed widget files
-local _widget = require( "widget" )
+local _widget = require( "scripts.libs.third_party.widget.widget" )
 
 local isGraphicsV1 = ( 1 == display.getDefault( "graphicsCompatibility" ) )
 local isByteColorRange = display.getDefault( "isByteColorRange" )

@@ -12,7 +12,7 @@
 --      may be used to endorse or promote products derived from this software
 --      without specific prior written permission.
 --    * Redistributions in any form whatsoever must retain the following
---      acknowledgment visually in the program (e.g. the credits of the program): 
+--      acknowledgment visually in the program (e.g. the credits of the program):
 --      'This product includes software developed by Corona Labs Inc. (http://www.coronalabs.com).'
 --
 -- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -26,14 +26,14 @@
 -- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-local M = 
+local M =
 {
 	_options = {},
 	_widgetName = "widget.newPickerWheel",
 }
 
 -- Require needed widget files
-local _widget = require( "widget" )
+local _widget = require( "scripts.libs.third_party.widget.widget" )
 
 local isGraphicsV1 = ( 1 == display.getDefault( "graphicsCompatibility" ) )
 local isByteColorRange = display.getDefault( "isByteColorRange" )
@@ -52,10 +52,10 @@ end
 local function createPickerWheel( pickerWheel, options )
 	-- Create a local reference to our options table
 	local opt = options
-	
+
 	-- Forward references
 	local imageSheet, view, viewBackground, viewOverlay, viewColumns
-	
+
 	-- Create the imageSheet
 	if opt.sheet then
 		imageSheet = opt.sheet
@@ -63,45 +63,45 @@ local function createPickerWheel( pickerWheel, options )
 		local themeData = require( opt.themeData )
 		imageSheet = graphics.newImageSheet( opt.themeSheetFile, themeData:getSheet() )
 	end
-	
+
 	-- Create the view
 	view = display.newGroup()
-	
+
 	-- The view's background
 	viewOverlay = display.newImageRect( pickerWheel, imageSheet, opt.overlayFrame, opt.overlayFrameWidth, opt.overlayFrameHeight )
-	
+
 	----------------------------------
 	-- Properties
 	----------------------------------
-	
+
 	-- The table which holds our pickerWheel columns
 	viewColumns = {}
 
 	-------------------------------------------------------
 	-- Assign properties to the view
 	-------------------------------------------------------
-	
+
 	-- Assign properties to our view
 	view._width = opt.overlayFrameWidth
 	view._height = opt.overlayFrameHeight
 	view._top = opt.top
 	view._yPosition = pickerWheel.y + ( view._height * 0.5 )
-	
+
 	-- Assign objects to our view
 	view._overlay = viewOverlay
 	view._background = viewBackground
 	view._columns = viewColumns
 	view._didTap = false
-		
+
 	-------------------------------------------------------
 	-- Assign properties/objects to the pickerWheel
 	-------------------------------------------------------
-	
+
 	-- Assign objects to the pickerWheel
 	pickerWheel._imageSheet = imageSheet
 	pickerWheel._view = view
 	pickerWheel:insert( view )
-	
+
 	-- Function to render the pickerWheels columns
 	local function _renderColumns( event )
 		local phase = event.phase
@@ -113,10 +113,10 @@ local function createPickerWheel( pickerWheel, options )
 		-- Create the column's title text
 		local rowTitle = display.newText( row, row._label, 0, 0, font, fontSize )
 		rowTitle.y = row.contentHeight * 0.5
-		
+
 		-- when the widget is outside the view so no column is rendered, then _values does not exist, so we check for it
 		if pickerWheel._view._columns[row.id]._values then
-		
+
 			if row.index == pickerWheel._view._columns[row.id]._values.index then
 				if ( event.target._fontColorSelected and type( event.target._fontColorSelected ) == "table" ) then
 					rowTitle:setFillColor( unpack( event.target._fontColorSelected ) )
@@ -130,17 +130,17 @@ local function createPickerWheel( pickerWheel, options )
 					rowTitle:setFillColor( unpack( labelColor ) )
 				end
 			end
-		
+
 		else
 				if ( event.target._fontColor and type( event.target._fontColor ) == "table" ) then
 					rowTitle:setFillColor( unpack( event.target._fontColor ) )
 				else
 					rowTitle:setFillColor( unpack( labelColor ) )
-				end			
+				end
 		end
 
 		row.value = rowTitle.text
-		
+
 		-- check if the text is greater than the actual column size
 		local availableWidth = viewOverlay.width - 28
 		local columnWidth = view._columns[ row.id ].width or availableWidth / #view._columns
@@ -151,9 +151,9 @@ local function createPickerWheel( pickerWheel, options )
 	        local numChars = columnWidth / pixelsPerChar
 	        row._label = row._label:sub(1, numChars)
 	        rowTitle.text = row._label
-	        
+
 	    end
-		
+
 		-- Align the text as requested
 		if "center" == alignment then
 
@@ -177,7 +177,7 @@ local function createPickerWheel( pickerWheel, options )
 			rowTitle.x = rowTitleX
 
 		elseif "right" == alignment then
-			
+
 			local rowTitleX
 			if isGraphicsV1 then
 				rowTitleX = row.x + ( row.contentWidth * 0.5 ) - ( rowTitle.contentWidth * 0.5 ) - 6
@@ -188,17 +188,17 @@ local function createPickerWheel( pickerWheel, options )
 			rowTitle.x = rowTitleX
 
 		end
-		
-		
+
+
 	end
-	
+
 	-- Create a background to sit behind the pickerWheel
 	viewBackground = display.newImageRect( view, imageSheet, opt.backgroundFrame, opt.overlayFrameWidth, opt.overlayFrameHeight )
 	viewBackground.x = viewOverlay.x
 	viewBackground.y = viewOverlay.y
 
 	-- Function to create the column separator
-	function view:_createSeparator( x )		
+	function view:_createSeparator( x )
 		local separator = display.newImageRect( self, imageSheet, opt.separatorFrame, opt.separatorFrameWidth + 4, opt.backgroundFrameHeight )
 		separator.x = x
 
@@ -207,7 +207,7 @@ local function createPickerWheel( pickerWheel, options )
 
 	-- The available width for the whole pickerWheel (to fit columns)
 	local availableWidth = viewOverlay.width - 28
-	
+
 	-- local method that handles scrolling to the tapped / touched index
 	local function didTapValue( event )
 		local phase = event.phase
@@ -217,7 +217,7 @@ local function createPickerWheel( pickerWheel, options )
 			view._didTap = true
 		end
 	end
-	
+
 	-- Create the pickerWheel Columns (which are tableView's)
 	local topPadding = 84
 	local bottomPadding = 96
@@ -260,7 +260,7 @@ local function createPickerWheel( pickerWheel, options )
 			onRowTouch = didTapValue
 		}
 		viewColumns[i]._view._isUsedInPickerWheel = true
-		
+
 		-- Column properties
 		viewColumns[i]._align = opt.columnData[i].align or "center"
 		viewColumns[i]._fontSize = opt.fontSize
@@ -270,29 +270,29 @@ local function createPickerWheel( pickerWheel, options )
 		viewColumns[i]._view._fontColor = opt.fontColor
 
 		-- Set the volumns initial values
-		viewColumns[i]._values = 
-		{ 
+		viewColumns[i]._values =
+		{
 			index = opt.columnData[i].startIndex,
 			value = opt.columnData[i].labels[opt.columnData[i].startIndex],
 		}
-		
+
 		-- Create the columns row's
 		for j = 1, #opt.columnData[i].labels do
 			viewColumns[i]:insertRow
 			{
 				rowHeight = 40,
-				rowColor = { 
+				rowColor = {
 					default = opt.columnColor,
-    				over = opt.columnColor, 
+    				over = opt.columnColor,
     			},
 				label = opt.columnData[i].labels[j],
 				id = i
 			}
 		end
-		
+
 		-- Insert the pickerWheel column into the view
 		view:insert( viewColumns[i] )
-	
+
 		-- Scroll to the defined index -- TODO needs failsafe
 		viewColumns[i]:scrollToIndex( opt.columnData[i].startIndex, 0 )
 	end
@@ -303,41 +303,41 @@ local function createPickerWheel( pickerWheel, options )
 			view:_createSeparator( viewColumns[i].x + viewColumns[i]._view._width * 0.5 )
 		end
 	end
-	
+
 	-- Push the view's background to the front.
 	viewOverlay:toFront()
-	
+
 	----------------------------------------------------------
-	--	PUBLIC METHODS	
+	--	PUBLIC METHODS
 	----------------------------------------------------------
-		
+
 	-- Function to retrieve the column values
 	function pickerWheel:getValues()
 		return self._view:_getValues()
-	end	
-	
+	end
+
 	-- Function to scroll to a specific pickerWheel column row
 	function pickerWheel:scrollToIndex( ... )
 		local arg = { ... }
 
 		local column = nil
-		
+
 		-- If the first arg is a number, set the column to that
 		if "number" == type( arg[1] ) then
 			column = arg[1]
-			
+
 			-- We have retrieved the column, now set arg1 to arg2 (which is the index to scroll to) so scrollTo index gets called as expected
 			arg[1] = arg[2]
 		end
-		
+
 		arg[4] = self._view:_getValues()
-		
+
 		-- Scroll to the specified column index
 		return self._view._columns[column]:scrollToIndex( unpack( arg ) )
 	end
-	
+
 	----------------------------------------------------------
-	--	PRIVATE METHODS	
+	--	PRIVATE METHODS
 	----------------------------------------------------------
 
 	-- Override scale function as pickerWheels don't support it
@@ -348,19 +348,19 @@ local function createPickerWheel( pickerWheel, options )
 	-- EnterFrame listener for our pickerWheel
 	function view:enterFrame( event )
 		local _pickerWheel = self.parent
-		-- Update the y position	
+		-- Update the y position
 		-- this has to be calculated in content coordinates to abstract the widget being in a group
 		local xPos, yPos = _pickerWheel:localToContent( 0, 0 )
-		
+
 		if isGraphicsV1 then
 			self._yPosition = yPos + self.y + ( self._height * 0.5 )
 		else
 			self._yPosition = yPos + ( self._height * 0.5 )
 		end
-		
+
 		-- Manage the Picker Wheels columns
 		for i = 1, #self._columns do
-		
+
 			if "ended" == self._columns[i]._view._phase and not self._columns[i]._view._updateRuntime then
 			    if not self._didTap then
 			    	local calculatePosition = self._yPosition - self.parent.contentHeight * 0.5
@@ -370,7 +370,7 @@ local function createPickerWheel( pickerWheel, options )
 				    self._didTap = false
 				end
 				self._columns[i]._view._phase = "none"
-				
+
 				-- update the actual values, by rerendering row
 				if nil ~= self._columns[i]._values then
 					if ( self._columns[i]._fontColorSelected and type( self._columns[i]._fontColorSelected ) == "table" ) then
@@ -381,32 +381,32 @@ local function createPickerWheel( pickerWheel, options )
 				end
 			end
 		end
-		
+
 		-- Constrain x/y scale values to 1.0
 		if _pickerWheel.xScale ~= 1.0 then
 			_pickerWheel.xScale = 1.0
 			print( M._widgetName, "Does not support scaling" )
 		end
-		
+
 		if _pickerWheel.yScale ~= 1.0 then
 			_pickerWheel.yScale = 1.0
 			print( M._widgetName, "Does not support scaling" )
 		end
-		
+
 		return true
 	end
-	
+
 	Runtime:addEventListener( "enterFrame", view )
-	
+
 	-- Function to retrieve the column values
 	function view:_getValues()
 		local values = {}
-		
+
 		-- Loop through all the columns and retrieve the values
 		for i = 1, #self._columns do
 			values[i] = self._columns[i]._values
 		end
-		
+
 		return values
 	end
 
@@ -414,27 +414,27 @@ local function createPickerWheel( pickerWheel, options )
 	function pickerWheel:_finalize()
 		-- Remove the event listener
 		Runtime:removeEventListener( "enterFrame", self._view )
-		
+
 		-- Set the ImageSheet to nil
 		self._imageSheet = nil
 		if imageSheet then imageSheet = nil; end
 	end
-			
+
 	return pickerWheel
 end
 
 
 -- Function to create a new pickerWheel object ( widget.newPickerWheel )
-function M.new( options, theme )	
+function M.new( options, theme )
 	local customOptions = options or {}
 	local themeOptions = theme or {}
-	
+
 	-- Create a local reference to our options table
 	local opt = M._options
-	
+
 	-- Check if the requirements for creating a widget has been met (throws an error if not)
 	_widget._checkRequirements( customOptions, themeOptions, M._widgetName )
-	
+
 	-------------------------------------------------------
 	-- Properties
 	-------------------------------------------------------
@@ -457,12 +457,12 @@ function M.new( options, theme )
 	opt.fontColorSelected = customOptions.fontColorSelected or themeOptions.fontColorSelected or blackColor
 	opt.columnColor = customOptions.columnColor or themeOptions.columnColor or defaultRowColor
 	opt.backgroundColor = customOptions.columnColor or themeOptions.columnColor or defaultRowColor
-	
+
 	if _widget.isSeven() then
 		opt.font = customOptions.font or themeOptions.font or "HelveticaNeue-Medium"
 		opt.fontSize = customOptions.fontSize or themeOptions.fontSize or 20
 	end
-	
+
 	-- Properties
 	opt.rowHeight = customOptions.rowHeight or 40
 	opt.columnData = customOptions.columns
@@ -471,23 +471,23 @@ function M.new( options, theme )
 	opt.sheet = customOptions.sheet
 	opt.themeSheetFile = themeOptions.sheet
 	opt.themeData = themeOptions.data
-	
+
 	opt.backgroundFrame = customOptions.backgroundFrame or _widget._getFrameIndex( themeOptions, themeOptions.backgroundFrame )
 	opt.backgroundFrameWidth = customOptions.backgroundFrameWidth or themeOptions.backgroundFrameWidth
 	opt.backgroundFrameHeight = customOptions.backgroundFrameHeight or themeOptions.backgroundFrameHeight
-	
+
 	opt.overlayFrame = customOptions.overlayFrame or _widget._getFrameIndex( themeOptions, themeOptions.overlayFrame )
 	opt.overlayFrameWidth = customOptions.overlayFrameWidth or themeOptions.overlayFrameWidth
 	opt.overlayFrameHeight = customOptions.overlayFrameHeight or themeOptions.overlayFrameHeight
-	
+
 	opt.separatorFrame = customOptions.separatorFrame or _widget._getFrameIndex( themeOptions, themeOptions.separatorFrame ) or _widget._getFrameIndex( themeOptions, themeOptions.seperatorFrame ) or nil
 	opt.separatorFrameWidth = customOptions.separatorFrameWidth or themeOptions.separatorFrameWidth or themeOptions.seperatorFrameWidth or nil
 	opt.separatorFrameHeight = customOptions.separatorFrameHeight or themeOptions.separatorFrameHeight or themeOptions.seperatorFrameHeight or nil
-	
+
 	-------------------------------------------------------
 	-- Create the pickerWheel
 	-------------------------------------------------------
-		
+
 	-- Create the pickerWheel object
 	local pickerWheel = _widget._new
 	{
@@ -499,14 +499,14 @@ function M.new( options, theme )
 
 	-- Create the pickerWheel
 	createPickerWheel( pickerWheel, opt )
-	
+
 	if isGraphicsV1 then
 		pickerWheel:setReferencePoint( display.TopLeftReferencePoint )
 	end
 
 	local x, y = _widget._calculatePosition( pickerWheel, opt )
 	pickerWheel.x, pickerWheel.y = x, y
-	
+
 	return pickerWheel
 end
 
